@@ -63,13 +63,17 @@ func GenWidgets() {
 			Title:    "NewVBox",
 			Children: make([]Widget, 0),
 		},
+		&Hbox{
+			Title:    "NewHBox",
+			Children: make([]Widget, 0),
+		},
 		&Button{
 			Title: "NewButton",
 			Text:  "NewButton",
 		},
 	}
 
-	widgetNames := []string{"VBox", "Button"}
+	widgetNames := []string{"VBox", "HBox", "Button"}
 
 	for i, val := range widgetNames {
 		cap := i
