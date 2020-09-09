@@ -53,7 +53,7 @@ func UpdateUI() {
 
 // ChangeSelected changes the selected widget
 func ChangeSelected(newselected int) {
-	widgetBtns[selected].(*widget.Button).Disable()
+	widgetBtns[selected].(*widget.Button).Enable()
 	widgetBtns[newselected].(*widget.Button).Disable()
 	selected = newselected
 }

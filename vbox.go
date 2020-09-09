@@ -1,4 +1,4 @@
-package main
+package Fyout
 
 import (
 	"fyne.io/fyne"
