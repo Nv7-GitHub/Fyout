@@ -16,7 +16,7 @@ type Hbox struct {
 
 // Build builds the layout
 func (h *Hbox) Build() fyne.CanvasObject {
-	Hbox := widget.NewHBox()
+	Hbox := widget.NewVBox()
 
 	for _, child := range h.Children {
 		Hbox.Append(child.Build())
@@ -28,7 +28,7 @@ func (h *Hbox) Build() fyne.CanvasObject {
 // BuildTree builds the tree view
 func (h *Hbox) BuildTree() fyne.CanvasObject {
 	ac := widget.NewAccordionContainer()
-	content := widget.NewHBox()
+	content := widget.NewVBox()
 
 	for _, child := range h.Children {
 		childtree := child.BuildTree()
