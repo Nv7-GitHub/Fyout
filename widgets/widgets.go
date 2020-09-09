@@ -1,4 +1,4 @@
-package Fyout
+package Widgets
 
 import (
 	"fyne.io/fyne"
@@ -6,6 +6,20 @@ import (
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 )
+
+var root Widget
+var widgets []Widget
+var selected int
+var widgetBtns []fyne.CanvasObject
+var w *fyne.Window
+
+// Widget allows you to recursively build the layouts
+type Widget interface {
+	Build() fyne.CanvasObject
+	BuildTree() fyne.CanvasObject
+	Delete(func())
+	Clone() Widget
+}
 
 // Root is the root element
 type Root struct {
@@ -64,4 +78,32 @@ func GenWidgets() {
 
 	selected = 0
 	ChangeSelected(0)
+}
+
+// ChangeSelected changes the selected widget
+func ChangeSelected(newselected int) {
+	widgetBtns[selected].(*widget.Button).Enable()
+	widgetBtns[newselected].(*widget.Button).Disable()
+	selected = newselected
+}
+
+// Init receives the window and initializes widgets
+func Init(win *fyne.Window) {
+	w = win
+	GenWidgets()
+}
+
+// UpdateUI builds the editor
+func UpdateUI() {
+	tree := root.BuildTree()
+	treescroll := widget.NewScrollContainer(tree)
+
+	layout := root.Build()
+
+	vbox := widget.NewVBox(widgetBtns...)
+	scroll := widget.NewScrollContainer(vbox)
+
+	vsplit := widget.NewVSplitContainer(treescroll, scroll)
+	hsplit := widget.NewHSplitContainer(vsplit, layout)
+	(*w).SetContent(hsplit)
 }

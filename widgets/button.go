@@ -1,4 +1,4 @@
-package Fyout
+package Widgets
 
 import (
 	"fyne.io/fyne"
