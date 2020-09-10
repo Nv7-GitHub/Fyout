@@ -1,6 +1,8 @@
 package Widgets
 
 import (
+	"encoding/gob"
+
 	"fyne.io/fyne"
 	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/theme"
@@ -12,6 +14,7 @@ var widgets []Widget
 var selected int
 var widgetBtns []fyne.CanvasObject
 var w *fyne.Window
+var path string
 
 // Widget allows you to recursively build the layouts
 type Widget interface {
@@ -19,6 +22,12 @@ type Widget interface {
 	BuildTree() fyne.CanvasObject
 	Delete(func())
 	Clone() Widget
+	Serialize() WidgetSerialized
+}
+
+// WidgetSerialized allows you to serialize the widgets
+type WidgetSerialized interface {
+	Deserialize(func()) Widget
 }
 
 // Root is the root element
@@ -53,7 +62,28 @@ func (r *Root) BuildTree() fyne.CanvasObject {
 
 func (r *Root) Delete(func()) {}
 
+func (r *Root) Serialize() WidgetSerialized {
+	if r.Child != nil {
+		return &RootSerialized{
+			Child: r.Child.Serialize(),
+		}
+	} else {
+		return nil
+	}
+}
+
 func (r *Root) Clone() Widget { return *new(Widget) }
+
+type RootSerialized struct {
+	Child WidgetSerialized
+}
+
+func (r *RootSerialized) Deserialize(func()) Widget {
+	return &Root{Child: r.Child.Deserialize(func() {
+		r.Child = nil
+		UpdateUI()
+	})}
+}
 
 // GenWidgets generates all the widgets
 func GenWidgets() {
@@ -71,6 +101,10 @@ func GenWidgets() {
 			Title: "NewButton",
 			Text:  "NewButton",
 		},
+	}
+
+	for _, val := range widgets {
+		gob.Register(val.Serialize())
 	}
 
 	widgetNames := []string{"VBox", "HBox", "Button"}
@@ -91,10 +125,11 @@ func ChangeSelected(newselected int) {
 	selected = newselected
 }
 
-// Init receives the window and initializes widgets
-func Init(win *fyne.Window) {
+// Init receives the window, file, and initializes widgets
+func Init(win *fyne.Window, pathfile string) {
 	w = win
 	GenWidgets()
+	path = pathfile
 }
 
 // UpdateUI builds the editor
@@ -110,4 +145,6 @@ func UpdateUI() {
 	vsplit := widget.NewVSplitContainer(treescroll, scroll)
 	hsplit := widget.NewHSplitContainer(vsplit, layout)
 	(*w).SetContent(hsplit)
+
+	Save()
 }

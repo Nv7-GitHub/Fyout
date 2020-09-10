@@ -74,3 +74,37 @@ func (v *Vbox) Clone() Widget {
 	c := *v
 	return &c
 }
+
+func (v *Vbox) Serialize() WidgetSerialized {
+	childS := make([]WidgetSerialized, len(v.Children))
+	for i, child := range v.Children {
+		childS[i] = child.Serialize()
+	}
+	return &VboxSerialized{
+		Title:    v.Title,
+		Children: childS,
+	}
+}
+
+// VboxSerialized a serialized vbox
+type VboxSerialized struct {
+	Title    string
+	Children []WidgetSerialized
+}
+
+func (v *VboxSerialized) Deserialize(deleteFunc func()) Widget {
+	vbox := Vbox{
+		Title:      v.Title,
+		Children:   make([]Widget, len(v.Children)),
+		DeleteFunc: deleteFunc,
+	}
+	for i, child := range v.Children {
+		vbox.Children[i] = child.Deserialize(func() {
+			copy(vbox.Children[i:], vbox.Children[i+1:])
+			vbox.Children[len(vbox.Children)-1] = nil
+			vbox.Children = vbox.Children[:len(vbox.Children)-1]
+			UpdateUI()
+		})
+	}
+	return &vbox
+}

@@ -74,3 +74,37 @@ func (h *Hbox) Clone() Widget {
 	c := *h
 	return &c
 }
+
+func (h *Hbox) Serialize() WidgetSerialized {
+	childS := make([]WidgetSerialized, len(h.Children))
+	for i, child := range h.Children {
+		childS[i] = child.Serialize()
+	}
+	return &VboxSerialized{
+		Title:    h.Title,
+		Children: childS,
+	}
+}
+
+// HboxSerialized a serialized vbox
+type HboxSerialized struct {
+	Title    string
+	Children []WidgetSerialized
+}
+
+func (h *HboxSerialized) Deserialize(deleteFunc func()) Widget {
+	hbox := Hbox{
+		Title:      h.Title,
+		Children:   make([]Widget, len(h.Children)),
+		DeleteFunc: deleteFunc,
+	}
+	for i, child := range h.Children {
+		hbox.Children[i] = child.Deserialize(func() {
+			copy(hbox.Children[i:], hbox.Children[i+1:])
+			hbox.Children[len(hbox.Children)-1] = nil
+			hbox.Children = hbox.Children[:len(hbox.Children)-1]
+			UpdateUI()
+		})
+	}
+	return &hbox
+}

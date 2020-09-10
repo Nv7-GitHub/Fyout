@@ -5,20 +5,23 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-// Vbox is a fyne VBox
+var onclicks map[string]func()
+
+// Button is a button
 type Button struct {
 	Title      string
 	DeleteFunc func()
 
-	Onclick func()
+	OnClick string
 	Text    string
 }
 
 // Build builds the layout
 func (b *Button) Build() fyne.CanvasObject {
 	button := widget.NewButton(b.Text, func() {
-		if b.Onclick != nil {
-			b.Onclick()
+		_, exists := onclicks[b.OnClick]
+		if exists {
+			onclicks[b.OnClick]()
 		}
 	})
 
@@ -51,4 +54,29 @@ func (b *Button) Delete(deletefunc func()) {
 func (b *Button) Clone() Widget {
 	c := *b
 	return &c
+}
+
+func (b *Button) Serialize() WidgetSerialized {
+	return &ButtonSerialized{
+		Title:   b.Title,
+		OnClick: b.OnClick,
+		Text:    b.Text,
+	}
+}
+
+// ButtonSerialized is the serialized form of a button
+type ButtonSerialized struct {
+	Title string
+
+	OnClick string
+	Text    string
+}
+
+func (b *ButtonSerialized) Deserialize(deleteFunc func()) Widget {
+	return &Button{
+		Title:      b.Title,
+		OnClick:    b.OnClick,
+		Text:       b.Text,
+		DeleteFunc: deleteFunc,
+	}
 }
