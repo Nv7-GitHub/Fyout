@@ -38,28 +38,23 @@ func (h *Hbox) BuildTree() fyne.CanvasObject {
 		content.Append(hbox)
 	}
 
-	addchildbtn := widget.NewButton("Add Selected", func() {
-		child := widgets[selected].Clone()
-		pos := len(h.Children)
-		child.Delete(func() {
-			copy(h.Children[pos:], h.Children[pos+1:])
-			h.Children[len(h.Children)-1] = nil
-			h.Children = h.Children[:len(h.Children)-1]
+	optionsbtn := newContextMenuButton("Options", fyne.NewMenu("",
+		fyne.NewMenuItem("Add Selected", func() {
+			child := widgets[selected].Clone()
+			pos := len(h.Children)
+			child.Delete(func() {
+				copy(h.Children[pos:], h.Children[pos+1:])
+				h.Children[len(h.Children)-1] = nil
+				h.Children = h.Children[:len(h.Children)-1]
+				UpdateUI()
+			})
+			h.Children = append(h.Children, child)
 			UpdateUI()
-		})
-		h.Children = append(h.Children, child)
-		UpdateUI()
-	})
-	content.Append(addchildbtn)
-
-	removebtn := widget.NewButton("Remove", h.DeleteFunc)
-	content.Append(removebtn)
-
-	renamebtn := widget.NewButton("Rename", func() {
-		h.Title = "Renamed"
-		UpdateUI()
-	})
-	content.Append(renamebtn)
+		}),
+		fyne.NewMenuItem("Remove", h.DeleteFunc),
+		fyne.NewMenuItem("Rename", func() { renameDialog(&h.Title) }),
+	))
+	content.Append(optionsbtn)
 
 	item := widget.NewAccordionItem(h.Title, content)
 	ac.Append(item)

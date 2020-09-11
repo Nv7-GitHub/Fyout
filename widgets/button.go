@@ -5,8 +5,6 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-var onclicks map[string]func()
-
 // Button is a button
 type Button struct {
 	Title      string
@@ -19,9 +17,9 @@ type Button struct {
 // Build builds the layout
 func (b *Button) Build() fyne.CanvasObject {
 	button := widget.NewButton(b.Text, func() {
-		_, exists := onclicks[b.OnClick]
+		_, exists := root.(*Root).Funcs[b.OnClick]
 		if exists {
-			onclicks[b.OnClick]()
+			root.(*Root).Funcs[b.OnClick]()
 		}
 	})
 

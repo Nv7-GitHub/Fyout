@@ -11,6 +11,7 @@ import (
 
 var root Widget
 var widgets []Widget
+var widgetNames []string
 var selected int
 var widgetBtns []fyne.CanvasObject
 var w *fyne.Window
@@ -33,6 +34,7 @@ type WidgetSerialized interface {
 // Root is the root element
 type Root struct {
 	Child Widget
+	Funcs map[string]func()
 }
 
 // Build builds the layout
@@ -107,7 +109,7 @@ func GenWidgets() {
 		gob.Register(val.Serialize())
 	}
 
-	widgetNames := []string{"VBox", "HBox", "Button"}
+	widgetNames = []string{"VBox", "HBox", "Button"}
 
 	for i, val := range widgetNames {
 		cap := i
@@ -147,4 +149,22 @@ func UpdateUI() {
 	(*w).SetContent(hsplit)
 
 	Save()
+}
+
+// AddWidget allows you to add your own widgets
+func AddWidget(name string, widg Widget) {
+	cap := len(widgets)
+	widgets = append(widgets, widg)
+	widgetNames = append(widgetNames, name)
+	widgetBtns = append(widgetBtns, widget.NewButton(name, func() { ChangeSelected(cap) }))
+	gob.Register(widg.Serialize())
+}
+
+// LoadLayout allows you to load a layout file and get a CanvasObject
+func LoadLayout(p string, funcs map[string]func()) fyne.CanvasObject {
+	path = p
+	GenWidgets()
+	Read()
+	root.(*Root).Funcs = funcs
+	return root.Build()
 }

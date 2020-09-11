@@ -14,7 +14,7 @@ var a *fyne.App
 var file *os.File
 
 // NewBuilder creates the builder UI
-func NewBuilder(path string, app *fyne.App) error {
+func NewBuilder(path string, app *fyne.App) {
 	a = app
 	win := (*app).NewWindow("Fyout Layout Builder")
 	win.Resize(fyne.NewSize(800, 600))
@@ -22,13 +22,8 @@ func NewBuilder(path string, app *fyne.App) error {
 	_, err := os.Stat(path)
 	exists := !os.IsNotExist(err)
 	if !exists {
-		file, err = os.Create(path)
-		if err != nil {
-			return err
-		}
 		Widgets.Init(w, path)
 		Widgets.Save()
-		Widgets.Read()
 		Widgets.UpdateUI()
 	} else {
 		Widgets.Init(w, path)
@@ -37,7 +32,6 @@ func NewBuilder(path string, app *fyne.App) error {
 	}
 	MainMenu(w)
 	(*w).Show()
-	return nil
 }
 
 // MainMenu creates the menu for the builder
@@ -56,4 +50,9 @@ func MainMenu(win *fyne.Window) {
 	settingsMenu := fyne.NewMenu("Settings", themeMenu)
 	mainMenu := fyne.NewMainMenu(settingsMenu)
 	(*w).SetMainMenu(mainMenu)
+}
+
+// LoadLayout calls LoadLayout in the widget package
+func LoadLayout(path string, funcs map[string]func()) fyne.CanvasObject {
+	return Widgets.LoadLayout(path, funcs)
 }
