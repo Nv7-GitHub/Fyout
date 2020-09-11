@@ -16,6 +16,7 @@ var selected int
 var widgetBtns []fyne.CanvasObject
 var w *fyne.Window
 var path string
+var widgetQueue []QueuedWidget
 
 // Widget allows you to recursively build the layouts
 type Widget interface {
@@ -89,7 +90,6 @@ func (r *RootSerialized) Deserialize(func()) Widget {
 
 // GenWidgets generates all the widgets
 func GenWidgets() {
-	root = new(Root)
 	widgets = []Widget{
 		&Vbox{
 			Title:    "NewVBox",
@@ -111,6 +111,11 @@ func GenWidgets() {
 
 	widgetNames = []string{"VBox", "HBox", "Button"}
 
+	for _, val := range widgetQueue {
+		widgets = append(widgets, val.Widget)
+		widgetNames = append(widgetNames, val.Name)
+	}
+
 	for i, val := range widgetNames {
 		cap := i
 		widgetBtns = append(widgetBtns, widget.NewButton(val, func() { ChangeSelected(cap) }))
@@ -130,6 +135,7 @@ func ChangeSelected(newselected int) {
 // Init receives the window, file, and initializes widgets
 func Init(win *fyne.Window, pathfile string) {
 	w = win
+	root = new(Root)
 	GenWidgets()
 	path = pathfile
 }
@@ -151,12 +157,18 @@ func UpdateUI() {
 	Save()
 }
 
+// QueuedWidget contains the data for a queued widget
+type QueuedWidget struct {
+	Widget Widget
+	Name   string
+}
+
 // AddWidget allows you to add your own widgets
 func AddWidget(name string, widg Widget) {
-	cap := len(widgets)
-	widgets = append(widgets, widg)
-	widgetNames = append(widgetNames, name)
-	widgetBtns = append(widgetBtns, widget.NewButton(name, func() { ChangeSelected(cap) }))
+	widgetQueue = append(widgetQueue, QueuedWidget{
+		Name:   name,
+		Widget: widg,
+	})
 	gob.Register(widg.Serialize())
 }
 

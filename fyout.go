@@ -56,3 +56,8 @@ func MainMenu(win *fyne.Window) {
 func LoadLayout(path string, funcs map[string]func()) fyne.CanvasObject {
 	return Widgets.LoadLayout(path, funcs)
 }
+
+// AddWidget calls AddWidget in the widget package
+func AddWidget(name string, widget Widgets.Widget) {
+	Widgets.AddWidget(name, widget)
+}
