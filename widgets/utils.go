@@ -1,8 +1,6 @@
 package Widgets
 
 import (
-	"fmt"
-
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/widget"
@@ -33,7 +31,6 @@ func renameDialog(output *string) {
 			return
 		}
 		*output = name.Text
-		fmt.Println(name.Text)
 		UpdateUI()
 	}, *w)
 }

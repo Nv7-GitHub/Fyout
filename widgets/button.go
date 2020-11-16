@@ -31,14 +31,18 @@ func (b *Button) BuildTree() fyne.CanvasObject {
 	ac := widget.NewAccordionContainer()
 	content := widget.NewVBox()
 
-	removebtn := widget.NewButton("Remove", b.DeleteFunc)
-	content.Append(removebtn)
-
-	renamebtn := widget.NewButton("Rename", func() {
-		b.Title = "Renamed"
-		UpdateUI()
-	})
-	content.Append(renamebtn)
+	optionsbtn := newContextMenuButton("Options", fyne.NewMenu("",
+		fyne.NewMenuItem("Remove", b.DeleteFunc),
+		fyne.NewMenuItem("Rename", func() {
+			renameDialog(&b.Title)
+			Save()
+		}),
+		fyne.NewMenuItem("Change Text", func() {
+			renameDialog(&b.Text)
+			Save()
+		}),
+	))
+	content.Append(optionsbtn)
 
 	item := widget.NewAccordionItem(b.Title, content)
 	ac.Append(item)

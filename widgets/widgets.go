@@ -99,6 +99,10 @@ func GenWidgets() {
 			Title:    "NewHBox",
 			Children: make([]Widget, 0),
 		},
+		&Label{
+			Title: "NewLabel",
+			Text:  "NewLabel",
+		},
 		&Button{
 			Title: "NewButton",
 			Text:  "NewButton",
@@ -109,7 +113,7 @@ func GenWidgets() {
 		gob.Register(val.Serialize())
 	}
 
-	widgetNames = []string{"VBox", "HBox", "Button"}
+	widgetNames = []string{"VBox", "HBox", "Label", "Button"}
 
 	for _, val := range widgetQueue {
 		widgets = append(widgets, val.Widget)
