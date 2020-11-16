@@ -1,4 +1,4 @@
-package Fyout
+package fyout
 
 import (
 	"os"
@@ -22,13 +22,13 @@ func NewBuilder(path string, app *fyne.App) {
 	_, err := os.Stat(path)
 	exists := !os.IsNotExist(err)
 	if !exists {
-		Widgets.Init(w, path)
-		Widgets.Save()
-		Widgets.UpdateUI()
+		widgets.Init(w, path)
+		widgets.Save()
+		widgets.UpdateUI()
 	} else {
-		Widgets.Init(w, path)
-		Widgets.Read()
-		Widgets.UpdateUI()
+		widgets.Init(w, path)
+		widgets.Read()
+		widgets.UpdateUI()
 	}
 	MainMenu(w)
 	(*w).Show()
@@ -40,11 +40,11 @@ func MainMenu(win *fyne.Window) {
 	themeMenu.ChildMenu = fyne.NewMenu("",
 		fyne.NewMenuItem("Dark Theme", func() {
 			(*a).Settings().SetTheme(theme.DarkTheme())
-			Widgets.UpdateUI()
+			widgets.UpdateUI()
 		}),
 		fyne.NewMenuItem("Light Theme", func() {
 			(*a).Settings().SetTheme(theme.LightTheme())
-			Widgets.UpdateUI()
+			widgets.UpdateUI()
 		}),
 	)
 	settingsMenu := fyne.NewMenu("Settings", themeMenu)
@@ -54,10 +54,10 @@ func MainMenu(win *fyne.Window) {
 
 // LoadLayout calls LoadLayout in the widget package
 func LoadLayout(path string, funcs map[string]func()) fyne.CanvasObject {
-	return Widgets.LoadLayout(path, funcs)
+	return widgets.LoadLayout(path, funcs)
 }
 
 // AddWidget calls AddWidget in the widget package
-func AddWidget(name string, widget Widgets.Widget) {
-	Widgets.AddWidget(name, widget)
+func AddWidget(name string, widget widgets.Widget) {
+	widgets.AddWidget(name, widget)
 }

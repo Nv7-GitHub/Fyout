@@ -1,4 +1,4 @@
-package Widgets
+package widgets
 
 import (
 	"encoding/gob"
