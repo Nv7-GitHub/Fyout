@@ -61,15 +61,18 @@ func (v *Vbox) BuildTree() fyne.CanvasObject {
 	return ac
 }
 
+// Delete provides a function to give the DeleteFunc
 func (v *Vbox) Delete(deletefunc func()) {
 	v.DeleteFunc = deletefunc
 }
 
+// Clone duplicates the widget with the same data
 func (v *Vbox) Clone() Widget {
 	c := *v
 	return &c
 }
 
+// Serialize creats a serialized form with the same data
 func (v *Vbox) Serialize() WidgetSerialized {
 	childS := make([]WidgetSerialized, len(v.Children))
 	for i, child := range v.Children {
@@ -87,6 +90,7 @@ type VboxSerialized struct {
 	Children []WidgetSerialized
 }
 
+// Deserialize creates a deserialized version of the widget
 func (v *VboxSerialized) Deserialize(deleteFunc func()) Widget {
 	vbox := Vbox{
 		Title:      v.Title,

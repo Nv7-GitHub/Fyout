@@ -49,15 +49,18 @@ func (b *Button) BuildTree() fyne.CanvasObject {
 	return ac
 }
 
+// Delete provides a function to give the DeleteFunc
 func (b *Button) Delete(deletefunc func()) {
 	b.DeleteFunc = deletefunc
 }
 
+// Clone duplicates the widget with the same data
 func (b *Button) Clone() Widget {
 	c := *b
 	return &c
 }
 
+// Serialize creats a serialized form with the same data
 func (b *Button) Serialize() WidgetSerialized {
 	return &ButtonSerialized{
 		Title:   b.Title,
@@ -74,6 +77,7 @@ type ButtonSerialized struct {
 	Text    string
 }
 
+// Deserialize creates a deserialized version of the widget
 func (b *ButtonSerialized) Deserialize(deleteFunc func()) Widget {
 	return &Button{
 		Title:      b.Title,

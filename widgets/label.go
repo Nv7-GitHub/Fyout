@@ -41,15 +41,18 @@ func (l *Label) BuildTree() fyne.CanvasObject {
 	return ac
 }
 
+// Delete provides a function to give the DeleteFunc
 func (l *Label) Delete(deletefunc func()) {
 	l.DeleteFunc = deletefunc
 }
 
+// Clone duplicates the widget with the same data
 func (l *Label) Clone() Widget {
 	c := *l
 	return &c
 }
 
+// Serialize creats a serialized form with the same data
 func (l *Label) Serialize() WidgetSerialized {
 	return &LabelSerialized{
 		Title: l.Title,
@@ -63,6 +66,7 @@ type LabelSerialized struct {
 	Text  string
 }
 
+// Deserialize creates a deserialized version of the widget
 func (l *LabelSerialized) Deserialize(deleteFunc func()) Widget {
 	return &Label{
 		Title:      l.Title,

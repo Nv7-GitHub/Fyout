@@ -61,15 +61,18 @@ func (h *Hbox) BuildTree() fyne.CanvasObject {
 	return ac
 }
 
+// Delete provides a function to give the DeleteFunc
 func (h *Hbox) Delete(deletefunc func()) {
 	h.DeleteFunc = deletefunc
 }
 
+// Clone duplicates the widget with the same data
 func (h *Hbox) Clone() Widget {
 	c := *h
 	return &c
 }
 
+// Serialize creats a serialized form with the same data
 func (h *Hbox) Serialize() WidgetSerialized {
 	childS := make([]WidgetSerialized, len(h.Children))
 	for i, child := range h.Children {
@@ -87,6 +90,7 @@ type HboxSerialized struct {
 	Children []WidgetSerialized
 }
 
+// Deserialize creates a deserialized version of the widget
 func (h *HboxSerialized) Deserialize(deleteFunc func()) Widget {
 	hbox := Hbox{
 		Title:      h.Title,
